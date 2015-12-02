@@ -1,0 +1,19 @@
+#ifndef _JSONPULL_TKN_HEAD_
+#define _JSONPULL_TKN_HEAD_
+
+
+#define JSONPULL_TKN_UNKNOWN (0)
+#define JSONPULL_TKN_REAL (1)
+#define JSONPULL_TKN_INT (2)
+#define JSONPULL_TKN_STRING (3)
+#define JSONPULL_TKN_LITERAL (4)
+#define JSONPULL_TKN_BEGIN_ARRAY (5)
+#define JSONPULL_TKN_END_ARRAY (6)
+#define JSONPULL_TKN_BEGIN_OBJECT (7)
+#define JSONPULL_TKN_END_OBJECT (8)
+#define JSONPULL_TKN_COMMA (9)
+#define JSONPULL_TKN_COLON (10)
+#define JSONPULL_TKN_EOF (-1)
+#define JSONPULL_TKN_ERROR (-2)
+
+#endif /* jsonpull_tkn.h */
