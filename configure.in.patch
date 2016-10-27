@@ -1,0 +1,40 @@
+*** ../../configure.in.org	2016-07-07 19:35:28.000000000 +0900
+--- ../../configure.in	2016-10-19 21:00:20.000000000 +0900
+*************** else
+*** 5011,5016 ****
+--- 5011,5035 ----
+  fi
+  
+  dnl ---------------------------------------------------------------------------
++ dnl rasterjson
++ dnl ---------------------------------------------------------------------------
++ 
++ RASTERJSON_ENABLED=no
++ 
++ AC_ARG_WITH(
++   rasterjson,
++   [  --with-rasterjson=[ARG]        Supports rasterjson (ARG=yes(default), no)],
++ )
++ 
++ if test "$with_rasterjson" = "yes" -o "$with_rasterjson" = ""; then
++   OPT_GDAL_FORMATS="rasterjson $OPT_GDAL_FORMATS"
++   AC_MSG_RESULT([RasterJSON enabled])
++   RASTERJSON_ENABLED=yes
++ else
++   AC_MSG_RESULT([RasterJSON disabled by user])
++ fi
++ 
++ dnl ---------------------------------------------------------------------------
+  dnl Test if sprintf can be overloaded with _XOPEN_SOURCE being defined or other,
+  dnl includes being included before, which mingw64 4.8 doesn't like (#6390)
+  dnl ---------------------------------------------------------------------------
+*************** LOC_MSG([  Armadillo support:         ${
+*** 5121,5126 ****
+--- 5140,5146 ----
+  LOC_MSG([  FreeXL support:            ${HAVE_FREEXL}])
+  LOC_MSG([  SOSI support:              ${SOSI_ENABLED}])
+  LOC_MSG([  MongoDB support:           ${MONGODB_ENABLED}])
++ LOC_MSG([  RasterJSON support:        ${RASTERJSON_ENABLED}])
+  LOC_MSG()
+  if test ! -z "`uname | grep Darwin`" ; then
+    LOC_MSG([  Mac OS X Framework :       ${MACOSX_FRAMEWORK}])

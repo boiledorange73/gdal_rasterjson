@@ -5,9 +5,29 @@ Specification of the format is available
 at http://www.finds.jp/fgddem/docs/rasterjson/ .
 
 
-1. Build and install
-1-1. Copy files into new directory $(GDAL)/frmts/rasterjson .
-1-2. Edit $(GDAL)/frmts/gdalallregister.cpp as following:
+1. How to build
+1-1. Build with patches
+1-1-1. Copy all
+  % mkdir $(GDAL)/frmts/rasterjson
+  % cp -r * $(GDAL)/frmts/rasterjson/
+  % cd $(GDAL)/frmts/rasterjson
+1-1-2. Apply patches.
+  % patch < gdalallregister.cpp.patch
+  % patch < gdal_frmts.h.patch
+  % patch < configure.in.patch
+  Note: Paths in patch files are relative.
+  Run patch in $(GDAL)/frmts/rasterjson/
+1-1-3. Recreates the configure script file.
+  % cd $(GDAL)
+  % ./autogen.sh
+  (REMEMBER RUN autogen.sh)
+
+1-2. Buil without patch
+1-2-1. Copy all
+  % mkdir $(GDAL)/frmts/rasterjson
+  % cp -r * $(GDAL)/frmts/rasterjson/
+1-2-2. Edit gdalallregister.cpp
+  % vi $(GDAL)/frmts/gdalallregister.cpp
   --
   GDALAllRegister()
   ...
@@ -16,7 +36,8 @@ at http://www.finds.jp/fgddem/docs/rasterjson/ .
   #endif
   ...
   --
-1-3. Edit $(GDAL)/gcore/gdal_frmts.h as following:
+1-2-3. Edit gdal_frmts.h
+  % vi $(GDAL)/gcore/gdal_frmts.h
   --
   CPL_C_START
   ...
@@ -24,17 +45,21 @@ at http://www.finds.jp/fgddem/docs/rasterjson/ .
   ...
   CPL_C_END
   --
-1-4. Edit $(GDAL)/configure as following:
+1-2-4. Edit configure
   --
   OPT_GDAL_FORMATS=rasterjson
   --
+  (DO NOT RUN autogen.sh)
 
-2. Options
+2. GDAL Options
   GDAL supports "-co" option to pass the format specific parameters.
   RasterJSON format supports some parameters.
+
 2-1. PRECISION (integer)
-  Specifies digits of fraction.
+  Specifies digits of fraction. 14 by default.
+
 2-2. F_FORMAT (boolean)
-  If true, uses "%f" instead of "%e" format for band value (NOT transform values).
+  If "true", uses "%f" instead of "%e" format for band value (NOT transform values).
   This affects only if band value is floating point number.
+  "false" by default.
 

@@ -611,7 +611,14 @@ fprintf(stderr, "nFloatPrecision %d\n", nFloatPrecision);
     GDALRasterBand * poBand = poSrcDS->GetRasterBand(b);
     int bReadAsInt = IsInt(poBand->GetRasterDataType());
     for( int y = 0; y < nYSize; y++ ) {
+      /* 2016/10/19 Args of RasterIO had been changed while 1.* to 2.*. */
+#if defined(GDAL_COMPUTE_VERSION) && GDAL_VERSION_NUM >= GDAL_COMPUTE_VERSION(2,0,0)
+      /* 2.0.0 or upper */
+      poBand->RasterIO(GF_Read, 0, y, nXSize, 1, buff, nXSize, 1, bReadAsInt ? GDT_Int32 : GDT_Float64, 0, 0, NULL);
+#else
+      /* 1.* */
       poBand->RasterIO(GF_Read, 0, y, nXSize, 1, buff, nXSize, 1, bReadAsInt ? GDT_Int32 : GDT_Float64, 0, 0);
+#endif
       TextEncoder_AppendZ(ter, L"      [");
       if( bReadAsInt ) {
         int32_t *p;

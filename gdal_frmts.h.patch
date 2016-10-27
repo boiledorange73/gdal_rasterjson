@@ -1,0 +1,13 @@
+*** ../../gcore/gdal_frmts.h.org	2016-07-07 19:35:34.000000000 +0900
+--- ../../gcore/gdal_frmts.h	2016-10-19 22:28:43.000000000 +0900
+*************** void CPL_DLL GDALRegister_WMTS(void);
+*** 186,191 ****
+--- 186,193 ----
+  void CPL_DLL GDALRegister_SAFE(void);
+  void CPL_DLL GDALRegister_SENTINEL2(void);
+  void CPL_DLL GDALRegister_mrf(void);
++ /* https://github.com/boiledorange73/gdal_rasterjson */
++ void CPL_DLL GDALRegister_RasterJSON(void);
+  CPL_C_END
+  
+  #endif /* ndef GDAL_FRMTS_H_INCLUDED */

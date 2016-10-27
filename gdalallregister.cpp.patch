@@ -1,0 +1,16 @@
+*** ../gdalallregister.cpp.org	2016-07-07 19:35:33.000000000 +0900
+--- ../gdalallregister.cpp	2016-10-19 22:27:57.000000000 +0900
+*************** void CPL_STDCALL GDALAllRegister()
+*** 554,559 ****
+--- 554,564 ----
+      GDALRegister_HTTP();
+  #endif
+  
++ /* https://github.com/boiledorange73/gdal_rasterjson */
++ #ifdef FRMT_rasterjson
++     GDALRegister_RasterJSON();
++ #endif
++ 
+  /* -------------------------------------------------------------------- */
+  /*      Deregister any drivers explicitly marked as suppressed by the   */
+  /*      GDAL_SKIP environment variable.                                 */
