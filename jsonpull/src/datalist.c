@@ -38,6 +38,7 @@
 
 static int _DataList_GetPointers(DataList *datalist, int index, DataListCell **ppDataListCell, int *pIndex);
 static int _DataList_CopyTo(DataList *datalist, DataListCell *cell, int index, void *dst, int count);
+static DataList *_DataList_NewSkeleton(int cell_elements, int element_bytes);
 
 /**
  * Constructs New DataList
@@ -47,22 +48,16 @@ static int _DataList_CopyTo(DataList *datalist, DataListCell *cell, int index, v
  */
 DataList *DataList_New(int cell_elements, int element_bytes) {
   DataList *datalist;
-  datalist = (DataList *)MALLOC(sizeof(DataList));
+  datalist = _DataList_NewSkeleton(cell_elements, element_bytes);
   if( datalist == NULL ) {
-    print_perror("malloc");
     return NULL;
   }
-  datalist->cell_elements = cell_elements;
-  datalist->element_bytes = element_bytes;
-  datalist->length = 0;
   datalist->head = DataListCell_New(datalist->cell_elements * datalist->element_bytes);
   if( datalist->head == NULL ) {
     FREE(datalist);
     return NULL;
   }
   datalist->tail = datalist->head;
-  datalist->hix = 0;
-  datalist->tix = 0;
   return datalist;
 }
 
@@ -146,7 +141,7 @@ int DataList_Push(DataList *datalist, void *src, int count) {
 /**
  * Copies latter elements and reduces.
  * @param datalist DataList instance.
- * @param dst Pointer to destination memory.
+ * @param dst Pointer to destination memory. If null, does not copy.
  * @param count Element count (NOT bytes) to copy.
  * @return Count of actually copied data.
  */
@@ -189,7 +184,7 @@ int DataList_Pop(DataList *datalist, void *dst, int count) {
 /**
  * Copies elder elements and reduces.
  * @param datalist DataList instance.
- * @param dst Pointer to destination memory.
+ * @param dst Pointer to destination memory. If null, does not copy.
  * @param count Element count (NOT bytes) to copy.
  * @return Count of actually copied data.
  */
@@ -285,10 +280,16 @@ int DataList_Unshift(DataList *datalist, void *src, int count) {
     else {
       copied_elements = datalist->hix;
     }
-
+/*
     bcopy(
       srctail - (copied_elements * datalist->element_bytes),
       (char *)(datalist->head->body)+((datalist->hix - copied_elements) * datalist->element_bytes),
+      copied_elements * datalist->element_bytes
+    );
+*/
+    memcpy(
+      (char *)(datalist->head->body)+((datalist->hix - copied_elements) * datalist->element_bytes),
+      srctail - (copied_elements * datalist->element_bytes),
       copied_elements * datalist->element_bytes
     );
     datalist->hix -= copied_elements;
@@ -315,7 +316,7 @@ int DataList_Unshift(DataList *datalist, void *src, int count) {
  * Copies elements.
  * @param datalist DataList instance.
  * @param index Starting index in datalist, starting with 0.
- * @param dst Pointer to destination memory.
+ * @param dst Pointer to destination memory. If null, does not copy.
  * @param count Element count (NOT bytes) to copy.
  * @return Count of actually copied data.
  */
@@ -326,6 +327,65 @@ int DataList_CopyTo(DataList *datalist, int index, void *dst, int count) {
     return 0;
   }
   return _DataList_CopyTo(datalist, cell, ix_cell, dst, count);
+}
+
+
+/**
+ * Creates copied DataList instance.
+ * @param src Source instance.
+ */
+DataList *DataList_Copy(DataList *src) {
+  DataList *dst;
+  DataListCell *dstcell;
+  DataListCell *srccell;
+  int bodybytes;
+
+  bodybytes = src->cell_elements * src->element_bytes;
+  dst = DataList_New(src->cell_elements, src->element_bytes);
+  if( dst == NULL ) {
+    return NULL;
+  }
+  /* Finishes if source has no cell. */
+  if( src->head == NULL ) {
+    return dst;
+  }
+
+  /* copies members excepting cell */
+  dst->length = src->length;
+  dst->hix = src->hix;
+  dst->tix = src->tix;
+
+  /* first cell */
+  srccell = src->head;
+  dstcell = dst->head;
+  memcpy(
+    (void *)((char *)(dstcell->body)),
+    (void *)((char *)(srccell->body)),
+    bodybytes
+  );
+  /* second and after */
+  while( srccell->next != NULL ) {
+    srccell = srccell->next;
+    /* creates next */
+    dstcell->next =  DataListCell_New(bodybytes);
+    if( dst == NULL ) {
+      /* Error occurred. Abort. */
+      DataList_Free(dst);
+      return NULL;
+    }
+    dstcell->next->prev = dstcell;
+    /* goes to next */
+    dstcell = dstcell->next;
+    /* updates dst->tail */
+    dst->tail = dstcell;
+    /* copy */
+    memcpy(
+      (void *)((char *)(dstcell->body)),
+      (void *)((char *)(srccell->body)),
+      bodybytes
+    );
+  }
+  return dst;
 }
 
 /**
@@ -453,6 +513,29 @@ static int _DataList_CopyTo(DataList *datalist, DataListCell *cell, int index, v
     }
   }
   return count - rest;
+}
+
+/**
+ * Creates DataList instance without any cell.
+ * @param cell_elements Element count in one cell.
+ * @param element_bytes Bytes in one element.
+ * @return New DataList instance. If malloc error occurres, returns NULL.
+ */
+static DataList *_DataList_NewSkeleton(int cell_elements, int element_bytes) {
+  DataList *datalist;
+  datalist = (DataList *)MALLOC(sizeof(DataList));
+  if( datalist == NULL ) {
+    print_perror("malloc");
+    return NULL;
+  }
+  datalist->cell_elements = cell_elements;
+  datalist->element_bytes = element_bytes;
+  datalist->length = 0;
+  datalist->head = NULL;
+  datalist->tail = NULL;
+  datalist->hix = 0;
+  datalist->tix = 0;
+  return datalist;
 }
 
 #endif /* datalist.c */

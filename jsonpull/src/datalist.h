@@ -13,8 +13,8 @@ struct _DataList {
   int length;
   DataListCell *head;
   DataListCell *tail;
-  int hix;
-  int tix;
+  int hix; /* head index on head cell */
+  int tix; /* tail index on tail cell */
 };
 
 typedef struct _DataList DataList;
@@ -24,6 +24,7 @@ extern "C" {
 #endif /* __cplusplus */
 
 _DATALIST_EXTERN DataList *DataList_New(int cell_elements, int element_bytes);
+_DATALIST_EXTERN DataList *DataList_Copy(DataList *src);
 _DATALIST_EXTERN void DataList_Free(DataList *datalist);
 _DATALIST_EXTERN void DataList_Clear(DataList *datalist);
 _DATALIST_EXTERN int DataList_Push(DataList *datalist, void *src, int count);
