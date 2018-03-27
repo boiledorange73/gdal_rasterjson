@@ -1181,7 +1181,10 @@ int TextEncoder_AppendF(TextEncoder *ter, const wchar_t *fmt, ...) {
       ret += TextEncoder_AppendFCell(ter, (wchar_t *)va_arg(args, wchar_t *), cell);
       break;
     case APPENDF_C_c:
-      wcharv = (wchar_t)va_arg(args, wchar_t);
+      // 2018/03/27 changed: 2nd arg of va_arg changed from wchar_t to int
+      // (sizeof(wchar_t) must not be less than sizeof(int)
+      // wcharv = (wchar_t)va_arg(args, wchar_t);
+      wcharv = (wchar_t)va_arg(args, int);
       ret += TextEncoder_AppendFCell(ter, &wcharv, cell);
       break;
 /*
