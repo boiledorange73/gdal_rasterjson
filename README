@@ -13,7 +13,7 @@ at http://www.finds.jp/fgddem/docs/rasterjson/ .
 1-1-1. Set PATH to gdal-config
   % setenv PATH "${PATH}:(path to gdal-config)"
 1-1-2. Compile as following:
-  % c++ -fPIC -shared RasterJSON.cpp -o gdal_RasterJSON.so \ `gdal-config --cflags` `gdal-config --libs` -I./jsonpull/src
+  % c++ -fPIC -shared RasterJSON.cpp -o gdal_RasterJSON.so `gdal-config --cflags` `gdal-config --libs` -I./jsonpull/src
 1-1-3. Install gdal_RasterJSON.so to plugin directory as following:
   % cp gdal_RasterJSON.so "`gdal-config --prefix`/lib/gdalplugins"
 
