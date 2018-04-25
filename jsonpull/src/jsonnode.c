@@ -43,7 +43,41 @@
 #define FREE(p) (free((p)))
 #endif
 
+/* macro for wcscasecmp */
+#if __POSIX_VISIBLE >= 200809
+  #define WCSCASECMP(A1,A2) (wcscasecmp((A1),(A2)))
+#else
+  #define WCSCASECMP(A1,A2) (my_wcscasecmp((A1),(A2)))
+
+  static int my_wcscasecmp(const wchar_t *a1, const wchar_t *a2) {
+    wchar_t c1, c2;
+    if( a1 == a2 ) {
+      return 0;
+    }
+    do {
+      c1 = *a1++;
+      c2 = *a2++;
+      // break if a1 arrives at terminater.
+      if( c1 == L'\0' ) {
+        break;
+      }
+      // tolower if c1 is lower ASCII letter.
+      if( c1 >= L'a' && c1 <= L'z' ) {
+        c1 = c1 - L'a' + L'A';
+      }
+      // tolower if c2 is lower ASCII letter.
+      if( c2 >= L'a' && c2 <= L'z' ) {
+        c2 = c2 - L'a' + L'A';
+      }
+    }
+    while( c1 == c2 );
+    // end of loop
+    return c1 - c2;
+  }
+#endif
+
 /* ---------------------------------------------------------------- internal */
+
 static size_t long2wcsn(long value, wchar_t *ptr, size_t max_count) {
   wchar_t *p;
   wchar_t *t;
@@ -145,10 +179,10 @@ static JsonNode *JsonNode_NewPrimitive(int type, const void *ptr, size_t valueby
 /* ---------------------------------------------------------------- global */
 JsonNode *JsonNode_NewLiteral(const wchar_t *literal) {
   if( literal != NULL ) {
-    if( wcscasecmp(literal, L"true") ) {
+    if( WCSCASECMP(literal, L"true") ) {
       return JsonNode_NewBoolean(1);
     }
-    if( wcscasecmp(literal, L"false") ) {
+    if( WCSCASECMP(literal, L"false") ) {
       return JsonNode_NewBoolean(0);
     }
   }
@@ -452,11 +486,11 @@ int JsonNode_GetBoolean(JsonNode *jn, int *ptr) {
     *ptr = *((int *)(jn->ptr)) != 0 ? 1 : 0;
     return 1;
   case JSONTYPE_STRING:
-    if( wcscasecmp((wchar_t *)(jn->ptr), L"true") == 0 ) {
+    if( WCSCASECMP((wchar_t *)(jn->ptr), L"true") == 0 ) {
       *ptr = 1;
       return 1;
     }
-    if( wcscasecmp((wchar_t *)(jn->ptr), L"false") == 0 ) {
+    if( WCSCASECMP((wchar_t *)(jn->ptr), L"false") == 0 ) {
       *ptr = 0;
       return 1;
     }
