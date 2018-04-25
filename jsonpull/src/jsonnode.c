@@ -2,7 +2,6 @@
 #define _JSONNODE_C_
 
 #include <wchar.h>
-#include <strings.h> /* bcopy */
 #include <stdlib.h> /* malloc */
 #include <string.h> /* strlen */
 #include <stdio.h> /* snprintf */

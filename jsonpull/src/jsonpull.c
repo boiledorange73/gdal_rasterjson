@@ -3,7 +3,7 @@
 
 #include <wchar.h>
 #include <stdlib.h>
-#include <strings.h> /* bcopy */
+#include <string.h> /* memcpy */
 
 #ifdef _JSONPULL_INTERNAL_
 #  ifndef _TEXTENCODING_INTERNAL_
@@ -552,7 +552,7 @@ int JsonPull_Pull(JsonPull *jsonpull) {
           }
           JsonPull_CopyValue(jsonpull, jsonpull->lex->tbuff->length, pnew, &newlen);
           /* sets new key */
-          bcopy(&pnew, pptail, sizeof(wchar_t *));
+          memcpy(pptail, &pnew, sizeof(wchar_t *));
         }
         return pullret;
       case JSONPULL_EVENT_BEGIN_ARRAY:

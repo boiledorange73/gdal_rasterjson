@@ -280,13 +280,6 @@ int DataList_Unshift(DataList *datalist, void *src, int count) {
     else {
       copied_elements = datalist->hix;
     }
-/*
-    bcopy(
-      srctail - (copied_elements * datalist->element_bytes),
-      (char *)(datalist->head->body)+((datalist->hix - copied_elements) * datalist->element_bytes),
-      copied_elements * datalist->element_bytes
-    );
-*/
     memcpy(
       (char *)(datalist->head->body)+((datalist->hix - copied_elements) * datalist->element_bytes),
       srctail - (copied_elements * datalist->element_bytes),
