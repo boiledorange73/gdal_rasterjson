@@ -2,7 +2,7 @@ RasterJSON driver
 
 GDAL driver for JSON based raw raster format.
 Specification of the format is available
-at http://www.finds.jp/fgddem/docs/rasterjson/ .
+at http://aginfo.cgk.affrc.go.jp/rstprv/docs/rasterjson/ .
 
 
 1. How to build
