@@ -94,7 +94,8 @@ RasterJSONDataset::~RasterJSONDataset() {
 fprintf(stderr, "Destructor\n");
 #endif
 
-  FlushCache();
+  /* 2022-07-04 modifid: 1 argument specified. */
+  FlushCache(true);
   CPLFree( pszProjection );
   CSLDestroy( papszPrj );
   if( pJsonRoot ) {
